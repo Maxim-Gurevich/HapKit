@@ -157,7 +157,8 @@ void loop()
         //*************************************************************
  
             // Init force 
-            int force = 0;
+            double force = 0.5;
+            double Tp = force*rh*rp/rs;
             double K = 10;  // spring stiffness 
     
            if(pos < 0)
