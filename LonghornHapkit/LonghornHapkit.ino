@@ -47,8 +47,8 @@ double rs = 0.074;  //[m]
 // *******************************************
 
 // Force output variables
-double force = 0;           // force at the handle
-double Tp = 0;              // torque of the motor pulley
+double force;           // force at the handle
+double Tp;              // torque of the motor pulley
 double duty = 0;            // duty cylce (between 0 and 255)
 unsigned int output = 0;    // output command to the motor
 
@@ -143,7 +143,7 @@ void loop()
           // Step 2.4: print xh via serial monitor
           //*************************************************************
 
-           Serial.println(xh,5);
+           //Serial.println(xh,5);
            
           // Step 2.5: compute handle velocity
           //*************************************************************
@@ -157,17 +157,17 @@ void loop()
         //*************************************************************
  
             // Init force 
-            double force = 0.5;
+            double force = 3;//1.5;
             double Tp = force*rh*rp/rs;
-            double K = 10;  // spring stiffness 
+            double K = 10;  // spring stiffness
     
-           if(pos < 0)
-          {
-            force = -K*pos; 
-          } else 
-          {
-            force = 0; 
-          }
+          // if(pos < 0)
+         // {
+         //   force = -K*pos; 
+        //  } else 
+//{
+         //   force = 0; 
+        //  }
 
          // This is just a simple example of a haptic wall that only uses encoder position.
          // You will need to add the rest of the following cases. You will want to enable some way to select each case. 
@@ -206,10 +206,10 @@ void loop()
       //*************************************************************
       //*** Section 5. Force output (do not change) *****************
       //*************************************************************
-
+       
         // Determine correct direction 
         //*************************************************************
-        if(force < 0)
+        if(Tp < 0)
         {
         digitalWrite(PWMoutp, HIGH);
         digitalWrite(PWMoutn, LOW);
@@ -218,19 +218,22 @@ void loop()
          digitalWrite(PWMoutp, LOW);
         digitalWrite(PWMoutn, HIGH);
         } 
-    
+        
+        // Convert Torque to Duty
+        duty=abs(Tp)*255/0.008;
         // Limit torque to motor and write
         //*************************************************************
-        if(abs(force) > 255)
+        if(duty > 255)
         {
-          force = 255; 
+          duty = 255;
         }
-           // Serial.println(pos); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(Tp);
+            Serial.println(duty); // Could print this to troublshoot but don't leave it due to bogging down speed
 
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
-        //analogWrite(PWMspeed, abs(force)); //abs(force)
+        analogWrite(PWMspeed, duty); //abs(force)
         //analogWrite(PWMspeed, 60); //abs(force)
   
   // Update variables 
