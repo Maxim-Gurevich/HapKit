@@ -41,7 +41,7 @@ double dxh_filt_prev2;
 // *******************************************
 // UNCOMMENT THESE AND INCLUDE CORRECT NUMBERS
 // *******************************************
-double rh = 0.09;   //[m] 
+double rh = 0.069;   //[m] 
 double rp = 0.005;  //[m] 
 double rs = 0.074;  //[m] 
 // *******************************************
@@ -127,22 +127,23 @@ void loop()
           // Step 2.1: print updatedPos via serial monitor
           //*************************************************************
 
-           //Serial.println(updatedPos);
+           //Serial.println(pos);
            
           // Step 2.2: Compute the angle of the sector pulley (ts) in degrees based on updatedPos
          //*************************************************************
 
-          //  double ts = -.0107*updatedPos + 4.9513; // NOTE - THESE NUMBERS MIGHT NOT BE CORRECT! USE KINEMATICS TO FIGRUE IT OUT!
+            double ts = -pos/48*360*rp/rs; // NOTE - THESE NUMBERS MIGHT NOT BE CORRECT! USE KINEMATICS TO FIGRUE IT OUT!
+           
        
          // Step 2.3: Compute the position of the handle based on ts
           //*************************************************************
 
-          //  xh = rh*(ts*3.14159/180);       // Again, these numbers may not be correct. You need to determine these relationships. 
-        
+            xh = rh*(ts*3.14159/180);       // Again, these numbers may not be correct. You need to determine these relationships. 
+         
           // Step 2.4: print xh via serial monitor
           //*************************************************************
 
-           //Serial.println(xh,5);
+           Serial.println(xh,5);
            
           // Step 2.5: compute handle velocity
           //*************************************************************
@@ -223,12 +224,12 @@ void loop()
         {
           force = 255; 
         }
-            Serial.println(pos); // Could print this to troublshoot but don't leave it due to bogging down speed
+           // Serial.println(pos); // Could print this to troublshoot but don't leave it due to bogging down speed
 
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
-        analogWrite(PWMspeed, abs(force)); //abs(force)
+        //analogWrite(PWMspeed, abs(force)); //abs(force)
         //analogWrite(PWMspeed, 60); //abs(force)
   
   // Update variables 
