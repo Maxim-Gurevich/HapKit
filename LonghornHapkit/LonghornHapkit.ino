@@ -14,7 +14,7 @@
 // Pin Declarations
 const int PWMoutp = 4;
 const int PWMoutn = 5;
-const int PWMspeed = 9;
+const int PWMspeed = 6;
 
 const int encoder0PinA = 2;
 const int encoder0PinB = 3;
@@ -156,8 +156,8 @@ void loop()
         //*************************************************************
  
             // Init force 
-            int force = 0;
-            double K = 500;   // spring stiffness 
+            //int force = 0;
+            double K = 5;  // spring stiffness 
     
            if(pos < 0)
           {
@@ -223,12 +223,12 @@ void loop()
         {
           force = 255; 
         }
-            Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(pos); // Could print this to troublshoot but don't leave it due to bogging down speed
 
         // Write out the motor speed.
         //*************************************************************    
-        analogWrite(PWMspeed, abs(force)); //abs(force)
-      //  analogWrite(PWMspeed, 255); //abs(force)
+        //analogWrite(PWMspeed, abs(force)); //abs(force)
+        analogWrite(PWMspeed, 60); //abs(force)
   
   // Update variables 
   lastVel = vel;
