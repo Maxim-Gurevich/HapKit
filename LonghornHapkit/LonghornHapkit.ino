@@ -156,8 +156,8 @@ void loop()
         //*************************************************************
  
             // Init force 
-            //int force = 0;
-            double K = 5;  // spring stiffness 
+            int force = 0;
+            double K = 10;  // spring stiffness 
     
            if(pos < 0)
           {
@@ -226,9 +226,10 @@ void loop()
             Serial.println(pos); // Could print this to troublshoot but don't leave it due to bogging down speed
 
         // Write out the motor speed.
-        //*************************************************************    
-        //analogWrite(PWMspeed, abs(force)); //abs(force)
-        analogWrite(PWMspeed, 60); //abs(force)
+        //*************************************************************
+        //setPwmFrequency(9, 8);   
+        analogWrite(PWMspeed, abs(force)); //abs(force)
+        //analogWrite(PWMspeed, 60); //abs(force)
   
   // Update variables 
   lastVel = vel;
