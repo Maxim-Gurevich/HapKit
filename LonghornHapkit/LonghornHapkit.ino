@@ -159,15 +159,13 @@ void loop()
             // Init force 
             double force = 3;//1.5;
             double Tp = force*rh*rp/rs;
-            double K = 10;  // spring stiffness
+            double K = .001;  // spring stiffness
     
-          // if(pos < 0)
-         // {
-         //   force = -K*pos; 
-        //  } else 
-//{
-         //   force = 0; 
-        //  }
+           if(pos < 0){
+            force = -K*pos; 
+           }else{
+            force = K*pos;
+           }
 
          // This is just a simple example of a haptic wall that only uses encoder position.
          // You will need to add the rest of the following cases. You will want to enable some way to select each case. 
