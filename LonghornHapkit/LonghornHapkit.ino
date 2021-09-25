@@ -184,31 +184,31 @@ void loop()
        
          // Linear Damping 
         //*************************************************************
-        #if defined(ItsDampingTime)
+           #if defined(ItsDampingTime)
              //Code here
            #endif
 
          // Nonlinear Friction
         //*************************************************************
-        #if defined(ItsFrictionTime)
+           #if defined(ItsFrictionTime)
              //Code here
            #endif
 
          // A Hard Surface 
         //*************************************************************
-        #if defined(ItsSurfaceTime)
+           #if defined(ItsSurfaceTime)
             //Code here
            #endif
 
          // Bump and Valley  
         //*************************************************************
-          #if defined(ItsBumpTime)
+           #if defined(ItsBumpTime)
              //Code here
            #endif
 
           // Texture 
         //*************************************************************
-        #if defined(ItsTextureTime)
+           #if defined(ItsTextureTime)
              //Code here
            #endif
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and 
