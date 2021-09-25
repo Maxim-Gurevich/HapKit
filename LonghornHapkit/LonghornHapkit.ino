@@ -24,7 +24,12 @@ Encoder encoder(encoder0PinA,encoder0PinB);
 double encoderResolution = 48;
 double pos = 0; 
 double lastPos = 0; 
-double lastVel = 0; 
+double lastVel = 0;
+double vh = 0; 
+double lastXh = 0;
+double lastLastVh = 0;
+double lastVh = 0;
+
 
 // Kinematics variables
 double xh = 0;           // position of the handle [m]
@@ -147,10 +152,10 @@ void loop()
            
           // Step 2.5: compute handle velocity
           //*************************************************************
-           //  vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
-           //  lastXh = xh;
-           //  lastLastVh = lastVh;
-           // lastVh = vh;
+              vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
+             lastXh = xh;
+             lastLastVh = lastVh;
+             lastVh = vh;
 
         //*************************************************************
         //*** Section 3. Assign a motor output force in Newtons *******  
