@@ -174,27 +174,43 @@ void loop()
           
           // Virtual Wall 
         //*************************************************************
-           
+           #if defined(ItsWallTime)
+             if(pos < 10){
+              force = -K*pos; 
+             }else{
+              force = 0;
+             }
+           #endif
        
          // Linear Damping 
         //*************************************************************
-        
+        #if defined(ItsDampingTime)
+             //Code here
+           #endif
 
          // Nonlinear Friction
         //*************************************************************
-        
+        #if defined(ItsFrictionTime)
+             //Code here
+           #endif
 
          // A Hard Surface 
         //*************************************************************
-        
+        #if defined(ItsSurfaceTime)
+            //Code here
+           #endif
 
          // Bump and Valley  
         //*************************************************************
-
+          #if defined(ItsBumpTime)
+             //Code here
+           #endif
 
           // Texture 
         //*************************************************************
-
+        #if defined(ItsTextureTime)
+             //Code here
+           #endif
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and 
            // compute interaction forces relative to the changing ball position.  
         //*************************************************************
