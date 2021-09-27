@@ -152,7 +152,7 @@ void loop()
            
           // Step 2.5: compute handle velocity
           //*************************************************************
-              vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
+             vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
              lastXh = xh;
              lastLastVh = lastVh;
              lastVh = vh;
@@ -180,7 +180,7 @@ void loop()
           // Virtual Wall 
         //*************************************************************
            #if defined(ItsWallTime)
-             if(pos < 10){
+             if(pos < 0.05){
               force = -K*pos; 
              }else{
               force = 0;
@@ -190,13 +190,21 @@ void loop()
          // Linear Damping 
         //*************************************************************
            #if defined(ItsDampingTime)
-             //Code here
+             force = -b*vh;
            #endif
 
          // Nonlinear Friction
+         // I want to try Brown and McPhee continuous non-linear friciton model
         //*************************************************************
            #if defined(ItsFrictionTime)
-             //Code here
+           
+           F_C=.5;    //coulombic friction
+           F_S=1;     //static friction
+           v_S=0.01;  //stribeck velocity
+           v_T=vh;    //tangential velocity
+           
+           force=(F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/(.25*(abs(v_T)/v_S)^2+.75)^2)*sign(v_T)
+             
            #endif
 
          // A Hard Surface 
