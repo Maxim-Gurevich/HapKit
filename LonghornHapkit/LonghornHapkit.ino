@@ -61,6 +61,12 @@ unsigned int output = 0;    // output command to the motor
 boolean hapticLoopFlagOut = false;
 boolean timeoutOccured = false;
 
+unsigned long t = 0; // time since program started
+unsigned long t_imp = 0; //time wall impact occurred
+boolean inWall = false;
+boolean impact = false;
+
+
 //--------------------------------------------------------------------------
 // Initialize
 //--------------------------------------------------------------------------
@@ -212,7 +218,30 @@ void loop()
         //*************************************************************
            #if defined(ItsSurfaceTime)
             //not sure about this one. force needs to be a function of time?
-           #
+           double d = 500;  //[ms]
+           double f = 50;   //[rad/s]
+           double A = 0.001 //[N/(m/s)]
+           t = millis();    //[ms]
+           
+           if(pos<0){
+            force = 0;
+              inWall = false;
+           }
+           else{
+            force = -K*pos;
+            if(!inWall&&!impact){
+              impact = true;
+              t_imp = t;
+            }
+           }
+
+           if(impact){
+            force = force+A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
+            if(t-t_imp>d){
+              impact = false;
+            }
+           }
+           #endif
 
 
          // Bump and Valley
