@@ -12,7 +12,8 @@
 
 //enable select  functions
 //#define ItsWallTime
-#define ItsDampingTime
+//#define ItsDampingTime
+#define ItsFrictionTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -188,7 +189,8 @@ void loop()
          // Linear Damping 
         //*************************************************************
            #if defined(ItsDampingTime)
-             //force = -b*vh;
+           double b = 1;
+             force = b*vh;
            #endif
 
          // Nonlinear Friction
@@ -196,13 +198,20 @@ void loop()
         //*************************************************************
            #if defined(ItsFrictionTime)
            
-           F_C=.5;    //coulombic friction
-           F_S=1;     //static friction
-           v_S=0.01;  //stribeck velocity
-           v_T=vh;    //tangential velocity
-           
-           force=(F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/(.25*(abs(v_T)/v_S)^2+.75)^2)*sign(v_T)
-             
+           double F_C=5;    //coulombic friction
+           double F_S=10;     //static friction
+           double v_S=0.1;  //stribeck velocity
+           double v_T=vh;    //tangential velocity
+            double b=0;
+           if (v_T=0){
+            b=0;
+           }else if(abs(v_T)<0.1){
+            b=1;
+           }else{
+            b=.5;
+            //force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*vh;
+           }     
+           force=b*vh;
            #endif
 
          // A Hard Surface 
@@ -263,7 +272,7 @@ void loop()
         if(duty < 25){
           duty=0; //deadzone
         }
-            Serial.println(xh); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
