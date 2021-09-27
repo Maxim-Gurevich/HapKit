@@ -15,7 +15,7 @@
 //#define ItsDampingTime
 //#define ItsFrictionTime
 //#define ItsBumpTime
-//#define ItsTextureTime
+#define ItsTextureTime
 
 // Pin Declarations
 const int PWMoutp = 4;
