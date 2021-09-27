@@ -13,9 +13,10 @@
 //enable select  functions
 //#define ItsWallTime
 //#define ItsDampingTime
-#define ItsFrictionTime
+//#define ItsFrictionTime
 //#define ItsBumpTime
-//#define ItsTextureTime
+#define ItsTextureTime
+//#define ItsSurfaceTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -229,27 +230,31 @@ void loop()
             //not sure about this one. force needs to be a function of time?
            double d = 500;  //[ms]
            double f = 50;   //[rad/s]
-           double A = 0.001 //[N/(m/s)]
+           double A = 0.001; //[N/(m/s)]
            t = millis();    //[ms]
 
-           if(pos<0){
+           if(xh<0){
             force = 0;
               inWall = false;
            }
            else{
-            force = -K*pos;
+            force = -K*xh;
             if(!inWall&&!impact){
               impact = true;
               t_imp = t;
             }
+            inWall = true;
+            Serial.println("Hit");
            }
 
-           if(impact){
-            force = force+A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
-            if(t-t_imp>d){
-              impact = false;
-            }
-           }
+//           if(impact){
+//            //force = force+A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
+//            if(t-t_imp>d){
+//              impact = false;
+//            }
+//           }
+
+           Serial.println(force);
            #endif
 
 
