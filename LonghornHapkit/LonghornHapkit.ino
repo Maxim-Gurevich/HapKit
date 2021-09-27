@@ -25,6 +25,11 @@ double encoderResolution = 48;
 double pos = 0;
 double lastPos = 0;
 double lastVel = 0;
+double vh = 0;
+double lastXh = 0;
+double lastLastVh = 0;
+double lastVh = 0;
+
 
 // Kinematics variables
 double xh = 0;           // position of the handle [m]
@@ -147,10 +152,10 @@ void loop()
 
           // Step 2.5: compute handle velocity
           //*************************************************************
-           //  vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
-           //  lastXh = xh;
-           //  lastLastVh = lastVh;
-           // lastVh = vh;
+             vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
+             lastXh = xh;
+             lastLastVh = lastVh;
+             lastVh = vh;
 
         //*************************************************************
         //*** Section 3. Assign a motor output force in Newtons *******
@@ -159,15 +164,13 @@ void loop()
             // Init force
             double force = 3;//1.5;
             double Tp = force*rh*rp/rs;
-            double K = 10;  // spring stiffness
+            double K = .001;  // spring stiffness
 
-          // if(pos < 0)
-         // {
-         //   force = -K*pos;
-        //  } else
-//{
-         //   force = 0;
-        //  }
+           if(pos < 0){
+            force = -K*pos;
+           }else{
+            force = K*pos;
+           }
 
          // This is just a simple example of a haptic wall that only uses encoder position.
          // You will need to add the rest of the following cases. You will want to enable some way to select each case.
@@ -176,26 +179,58 @@ void loop()
 
           // Virtual Wall
         //*************************************************************
-
+           #if defined(ItsWallTime)
+             if(pos < 0.05){
+              force = -K*pos;
+             }else{
+              force = 0;
+             }
+           #endif
 
          // Linear Damping
         //*************************************************************
-
+           #if defined(ItsDampingTime)
+             force = -b*vh;
+           #endif
 
          // Nonlinear Friction
+         // I want to try Brown and McPhee continuous non-linear friciton model
         //*************************************************************
+           #if defined(ItsFrictionTime)
+
+           F_C=.5;    //coulombic friction
+           F_S=1;     //static friction
+           v_S=0.01;  //stribeck velocity
+           v_T=vh;    //tangential velocity
+
+           force=(F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/(.25*(abs(v_T)/v_S)^2+.75)^2)*sign(v_T)
+
+           #endif
 
 
          // A Hard Surface
         //*************************************************************
+           #if defined(ItsSurfaceTime)
+            //not sure about this one. force needs to be a function of time?
+           #
 
 
          // Bump and Valley
         //*************************************************************
-
+           #if defined(ItsBumpTime)
+           fq=10;   // frequency adjuster
+           amp=.01; // amplitude adjuster
+           force=amp*sin(fq*xh);
+           #endif
 
           // Texture
         //*************************************************************
+           #if defined(ItsTextureTime)
+           //I just copied the bump code. Make some changes to get an interesting result
+           fq=10;   // frequency adjuster
+           amp=.01; // amplitude adjuster
+           force=amp*sin(fq*xh);
+           #endif
 
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and
            // compute interaction forces relative to the changing ball position.
