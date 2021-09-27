@@ -10,6 +10,12 @@
 #include <TimerOne.h>  // This library manages the timing of the haptic loop
 #include <Encoder.h>   // This library manages the encoder read.
 
+//enable select  functions
+//#define ItsWallTime
+//#define ItsDampingTime
+#define ItsFrictionTime
+//#define ItsBumpTime
+//#define ItsTextureTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -54,7 +60,6 @@ double rs = 0.074;  //[m]
 // Force output variables
 double force;           // force at the handle
 double Tp;              // torque of the motor pulley
-double duty = 0;            // duty cylce (between 0 and 255)
 unsigned int output = 0;    // output command to the motor
 
 // Timing Variables: Initalize Timer and Set Haptic Loop
@@ -168,15 +173,10 @@ void loop()
         //*************************************************************
 
             // Init force
-            double force = 3;//1.5;
-            double Tp = force*rh*rp/rs;
-            double K = .001;  // spring stiffness
+            double force = 0;
+            //double K = 300;  // spring stiffness
 
-           if(pos < 0){
-            force = -K*pos;
-           }else{
-            force = K*pos;
-           }
+            //force = K*xh;
 
          // This is just a simple example of a haptic wall that only uses encoder position.
          // You will need to add the rest of the following cases. You will want to enable some way to select each case.
@@ -186,8 +186,9 @@ void loop()
           // Virtual Wall
         //*************************************************************
            #if defined(ItsWallTime)
-             if(pos < 0.05){
-              force = -K*pos;
+           double K=300;
+             if(xh > 0.005){
+              force = K*(xh-0.005);
              }else{
               force = 0;
              }
@@ -196,7 +197,8 @@ void loop()
          // Linear Damping
         //*************************************************************
            #if defined(ItsDampingTime)
-             force = -b*vh;
+           double b = 1;
+             force = b*vh;
            #endif
 
          // Nonlinear Friction
@@ -204,13 +206,20 @@ void loop()
         //*************************************************************
            #if defined(ItsFrictionTime)
 
-           F_C=.5;    //coulombic friction
-           F_S=1;     //static friction
-           v_S=0.01;  //stribeck velocity
-           v_T=vh;    //tangential velocity
-
-           force=(F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/(.25*(abs(v_T)/v_S)^2+.75)^2)*sign(v_T)
-
+           double F_C=.3;    //coulombic friction
+           double F_S=.5;     //static friction
+           double v_S=0.05;  //stribeck velocity
+           double v_T=vh;    //tangential velocity
+            double b=.001;
+           if (v_T=0){
+            //b=0;
+           //}else if(abs(v_T)<0.1){
+            //b=b*1000;
+           }else{
+            //b=b;
+            force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
+           }
+           force=b*vh;
            #endif
 
 
@@ -222,7 +231,7 @@ void loop()
            double f = 50;   //[rad/s]
            double A = 0.001 //[N/(m/s)]
            t = millis();    //[ms]
-           
+
            if(pos<0){
             force = 0;
               inWall = false;
@@ -247,8 +256,8 @@ void loop()
          // Bump and Valley
         //*************************************************************
            #if defined(ItsBumpTime)
-           fq=10;   // frequency adjuster
-           amp=.01; // amplitude adjuster
+           double fq=1000;   // frequency adjuster
+           double amp=.5; // amplitude adjuster
            force=amp*sin(fq*xh);
            #endif
 
@@ -256,8 +265,8 @@ void loop()
         //*************************************************************
            #if defined(ItsTextureTime)
            //I just copied the bump code. Make some changes to get an interesting result
-           fq=10;   // frequency adjuster
-           amp=.01; // amplitude adjuster
+           double fq=100000;   // frequency adjuster
+           double amp=.3; // amplitude adjuster
            force=amp*sin(fq*xh);
            #endif
 
@@ -273,32 +282,34 @@ void loop()
 
         // Determine correct direction
         //*************************************************************
+        double Tp = force*rh*rp/rs;
         if(Tp < 0)
         {
         digitalWrite(PWMoutp, HIGH);
         digitalWrite(PWMoutn, LOW);
         } else
         {
-         digitalWrite(PWMoutp, LOW);
+        digitalWrite(PWMoutp, LOW);
         digitalWrite(PWMoutn, HIGH);
         }
 
         // Convert Torque to Duty
-        duty=abs(Tp)*255/0.008;
+        int duty=abs(Tp)*255/0.008;
         // Limit torque to motor and write
         //*************************************************************
         if(duty > 255)
         {
           duty = 255;
         }
-            Serial.println(Tp);
-            Serial.println(duty); // Could print this to troublshoot but don't leave it due to bogging down speed
 
+        if(duty < 25){
+          duty=0; //deadzone
+        }
+            Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);
         analogWrite(PWMspeed, duty); //abs(force)
-        //analogWrite(PWMspeed, 60); //abs(force)
 
   // Update variables
   lastVel = vel;
