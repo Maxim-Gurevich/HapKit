@@ -14,6 +14,8 @@
 //#define ItsWallTime
 //#define ItsDampingTime
 #define ItsFrictionTime
+//#define ItsBumpTime
+//#define ItsTextureTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -198,18 +200,18 @@ void loop()
         //*************************************************************
            #if defined(ItsFrictionTime)
            
-           double F_C=5;    //coulombic friction
-           double F_S=10;     //static friction
-           double v_S=0.1;  //stribeck velocity
+           double F_C=.3;    //coulombic friction
+           double F_S=.5;     //static friction
+           double v_S=0.05;  //stribeck velocity
            double v_T=vh;    //tangential velocity
-            double b=0;
+            double b=.001;
            if (v_T=0){
-            b=0;
-           }else if(abs(v_T)<0.1){
-            b=1;
+            //b=0;
+           //}else if(abs(v_T)<0.1){
+            //b=b*1000;
            }else{
-            b=.5;
-            //force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*vh;
+            //b=b;
+            force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
            }     
            force=b*vh;
            #endif
@@ -223,8 +225,8 @@ void loop()
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
-           fq=10;   // frequency adjuster
-           amp=.01; // amplitude adjuster
+           double fq=1000;   // frequency adjuster
+           double amp=.5; // amplitude adjuster
            force=amp*sin(fq*xh);
            #endif
 
@@ -232,8 +234,8 @@ void loop()
         //*************************************************************
            #if defined(ItsTextureTime)
            //I just copied the bump code. Make some changes to get an interesting result
-           fq=10;   // frequency adjuster
-           amp=.01; // amplitude adjuster
+           double fq=100000;   // frequency adjuster
+           double amp=.3; // amplitude adjuster
            force=amp*sin(fq*xh);
            #endif
            
