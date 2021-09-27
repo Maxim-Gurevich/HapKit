@@ -210,19 +210,26 @@ void loop()
          // A Hard Surface 
         //*************************************************************
            #if defined(ItsSurfaceTime)
-            //not sure about this one
-           #endif
+            //not sure about this one. force needs to be a function of time?
+           #
+
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
-             //Code here
+           fq=10;   // frequency adjuster
+           amp=.01; // amplitude adjuster
+           force=amp*sin(fq*xh);
            #endif
 
           // Texture 
         //*************************************************************
            #if defined(ItsTextureTime)
-             //Code here
+           //I just copied the bump code. Make some changes to get an interesting result
+           fq=10;   // frequency adjuster
+           amp=.01; // amplitude adjuster
+           force=amp*sin(fq*xh);
            #endif
+           
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and 
            // compute interaction forces relative to the changing ball position.  
         //*************************************************************
