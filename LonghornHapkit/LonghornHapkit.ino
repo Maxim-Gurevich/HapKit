@@ -16,6 +16,7 @@
 //#define ItsFrictionTime
 //#define ItsBumpTime
 #define ItsTextureTime
+//#define ItsSurfaceTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -66,6 +67,10 @@ unsigned int output = 0;    // output command to the motor
 boolean hapticLoopFlagOut = false; 
 boolean timeoutOccured = false; 
 
+unsigned long t=0;
+unsigned long t_imp=0;
+boolean inWall =false;
+boolean impact=false;
 //--------------------------------------------------------------------------
 // Initialize
 //--------------------------------------------------------------------------
@@ -221,6 +226,34 @@ void loop()
         //*************************************************************
            #if defined(ItsSurfaceTime)
             //not sure about this one. force needs to be a function of time?
+           double d = 500;  //[ms]
+           double f = 50;   //[rad/s]
+           double A = 0.001; //[N/(m/s)]
+           double K=300;
+           t = millis();    //[ms]
+
+           if(xh<0){
+            force = 0;
+              inWall = false;
+           }
+           else{
+            force = -K*xh;
+            if(!inWall&&!impact){
+              impact = true;
+              t_imp = t;
+            }
+            inWall = true;
+            Serial.println("Hit");
+           }
+
+//           if(impact){
+//            //force = force+A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
+//            if(t-t_imp>d){
+//              impact = false;
+//            }
+//           }
+
+           Serial.println(force);
            #endif
 
          // Bump and Valley  
