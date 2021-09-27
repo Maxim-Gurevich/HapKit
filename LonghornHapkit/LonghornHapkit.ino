@@ -206,13 +206,7 @@ void loop()
          // I want to try Brown and McPhee continuous non-linear friciton model
         //*************************************************************
            #if defined(ItsFrictionTime)
-<<<<<<< HEAD
-           
-           double F_C=0;    //coulombic friction
-=======
-
            double F_C=.3;    //coulombic friction
->>>>>>> de3799d6e281e5dbcb06e5def380b1cfada05bab
            double F_S=.5;     //static friction
            double v_S=0.06;  //stribeck velocity
            double v_T=vh;    //tangential velocity
@@ -223,17 +217,10 @@ void loop()
            }else if(abs(v_T)<0.0001){
             //force=.3*vh/abs(vh);
            }else{
-<<<<<<< HEAD
             //b=0.1;
             //force=b*vh;
             force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
            }     
-=======
-            //b=b;
-            force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
-           }
-           force=b*vh;
->>>>>>> de3799d6e281e5dbcb06e5def380b1cfada05bab
            #endif
 
 
