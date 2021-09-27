@@ -210,9 +210,8 @@ void loop()
          // A Hard Surface 
         //*************************************************************
            #if defined(ItsSurfaceTime)
-            //Code here
+            //not sure about this one
            #endif
-
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
