@@ -204,16 +204,17 @@ void loop()
            double F_S=.5;     //static friction
            double v_S=0.05;  //stribeck velocity
            double v_T=vh;    //tangential velocity
-            double b=.001;
-           if (v_T=0){
-            //b=0;
-           //}else if(abs(v_T)<0.1){
-            //b=b*1000;
+           double b=0;
+           if (abs(v_T)<0.00001){
+            b=0;
+           }else if(abs(v_T)<0.1){
+            force=.3*vh/abs(vh);
+            //force=0;
            }else{
-            //b=b;
-            force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
+            b=0.1;
+            force=b*vh;
+            //force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
            }     
-           force=b*vh;
            #endif
 
          // A Hard Surface 
