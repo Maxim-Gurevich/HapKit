@@ -10,6 +10,9 @@
 #include <TimerOne.h>  // This library manages the timing of the haptic loop 
 #include <Encoder.h>   // This library manages the encoder read.
 
+//enable select  functions
+//#define ItsWallTime
+#define ItsDampingTime
 
 // Pin Declarations
 const int PWMoutp = 4;
@@ -54,7 +57,6 @@ double rs = 0.074;  //[m]
 // Force output variables
 double force;           // force at the handle
 double Tp;              // torque of the motor pulley
-double duty = 0;            // duty cylce (between 0 and 255)
 unsigned int output = 0;    // output command to the motor
 
 // Timing Variables: Initalize Timer and Set Haptic Loop
@@ -162,15 +164,10 @@ void loop()
         //*************************************************************
  
             // Init force 
-            double force = 3;//1.5;
-            double Tp = force*rh*rp/rs;
-            double K = .001;  // spring stiffness
-    
-           if(pos < 0){
-            force = -K*pos; 
-           }else{
-            force = K*pos;
-           }
+            double force = 0;
+            //double K = 300;  // spring stiffness
+
+            //force = K*xh; 
 
          // This is just a simple example of a haptic wall that only uses encoder position.
          // You will need to add the rest of the following cases. You will want to enable some way to select each case. 
@@ -180,8 +177,9 @@ void loop()
           // Virtual Wall 
         //*************************************************************
            #if defined(ItsWallTime)
-             if(pos < 0.05){
-              force = -K*pos; 
+           double K=300;
+             if(xh > 0.005){
+              force = K*(xh-0.005); 
              }else{
               force = 0;
              }
@@ -190,7 +188,7 @@ void loop()
          // Linear Damping 
         //*************************************************************
            #if defined(ItsDampingTime)
-             force = -b*vh;
+             //force = -b*vh;
            #endif
 
          // Nonlinear Friction
@@ -211,7 +209,7 @@ void loop()
         //*************************************************************
            #if defined(ItsSurfaceTime)
             //not sure about this one. force needs to be a function of time?
-           #
+           #endif
 
          // Bump and Valley  
         //*************************************************************
@@ -242,32 +240,34 @@ void loop()
        
         // Determine correct direction 
         //*************************************************************
+        double Tp = force*rh*rp/rs;
         if(Tp < 0)
         {
         digitalWrite(PWMoutp, HIGH);
         digitalWrite(PWMoutn, LOW);
         } else 
         {
-         digitalWrite(PWMoutp, LOW);
+        digitalWrite(PWMoutp, LOW);
         digitalWrite(PWMoutn, HIGH);
         } 
         
         // Convert Torque to Duty
-        duty=abs(Tp)*255/0.008;
+        int duty=abs(Tp)*255/0.008;
         // Limit torque to motor and write
         //*************************************************************
         if(duty > 255)
         {
           duty = 255;
         }
-            Serial.println(Tp);
-            Serial.println(duty); // Could print this to troublshoot but don't leave it due to bogging down speed
 
+        if(duty < 25){
+          duty=0; //deadzone
+        }
+            Serial.println(xh); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
         analogWrite(PWMspeed, duty); //abs(force)
-        //analogWrite(PWMspeed, 60); //abs(force)
   
   // Update variables 
   lastVel = vel;
