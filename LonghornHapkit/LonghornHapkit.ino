@@ -74,14 +74,8 @@ boolean impact = false;
 
 double d = 500;  //[ms]
 double f = 50;   //[rad/s]
-double A = 0.00001; //[N/(m/s)]
+double A = 0.5; //[N/(m/s)]
 double force_vib = 0;
-
-
-unsigned long t=0;
-unsigned long t_imp=0;
-boolean inWall =false;
-boolean impact=false;
 //--------------------------------------------------------------------------
 // Initialize
 //--------------------------------------------------------------------------
@@ -245,23 +239,24 @@ void loop()
               inWall = false;
            }
            else{
+            //force = 0;
             force = K*xh;
-//            if(!inWall){
-//              //impact = true;
-//              t_imp = t;
-//            }
+            if(!inWall){
+              //impact = true;
+              t_imp = t;
+            }
             inWall = true;
            }
 
            //if(impact){
-            force_vib = A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
+            force_vib = A*abs(vh)*exp(log(0.01)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
             force = force+force_vib;
             //if(t-t_imp>d){
               //impact = false;
             //}
            //}
 
-           Serial.println(force_vib);
+           //Serial.println(force_vib);
            #endif
 
          // Bump and Valley
