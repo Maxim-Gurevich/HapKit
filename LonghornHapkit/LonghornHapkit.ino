@@ -206,8 +206,8 @@ void loop()
            #if defined(ItsFrictionTime)
            
            double F_C=0;    //coulombic friction
-           double F_S=.5;     //static friction
-           double v_S=0.06;  //stribeck velocity
+           double F_S=.06;     //static friction
+           double v_S=0.1;  //stribeck velocity
            double v_T=vh;    //tangential velocity
            double b=0;
            if (abs(v_T)<0.00001){
