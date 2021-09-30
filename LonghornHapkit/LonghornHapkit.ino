@@ -13,8 +13,8 @@
 //enable select  functions
 //#define ItsWallTime
 //#define ItsDampingTime
-//#define ItsFrictionTime
-#define ItsBumpTime
+#define ItsFrictionTime
+//#define ItsBumpTime
 //#define ItsTextureTime
 //#define ItsSurfaceTime
 
@@ -222,8 +222,8 @@ void loop()
 
            //Piecewise friction (based on Karnopp philisophy)
            //The model has been simplified to better suit the hardware capabilities
-            if(abs(v_T)<0.0001){
-            force=.3*vh/abs(vh);//at small speeds, apply a constant force
+            if(abs(vh)<0.15&&abs(vh)>0.0001){
+            force=.6*vh/abs(vh);//at small speeds, apply a constant force
            }else{
             force=0;//once speed increases, remove friction force, helps sell effect
            }     
@@ -329,7 +329,7 @@ void loop()
         if(duty < 25){
           duty=0; //deadzone, makes the device less noisy
         }
-            Serial.println(xh); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(vh); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
