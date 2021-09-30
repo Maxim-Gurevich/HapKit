@@ -187,7 +187,7 @@ void loop()
            #if defined(ItsWallTime)
            double K=300;
              if(xh > 0.005){
-              force = K*(xh-0.005); 
+              force = K*(xh-0.005);//when inside the wall, apply a spring force
              }else{
               force = 0;
              }
@@ -197,7 +197,7 @@ void loop()
         //*************************************************************
            #if defined(ItsDampingTime)
            double b = 1;
-             force = b*vh;
+             force = b*vh;//simple viscous damping
            #endif
 
          // Nonlinear Friction
@@ -205,24 +205,31 @@ void loop()
         //*************************************************************
            #if defined(ItsFrictionTime)
            
+           //Brown and McPhee friction (would like to use this, but arduino is having difficulty)
+           /*
            double F_C=0;    //coulombic friction
            double F_S=.06;     //static friction
            double v_S=0.1;  //stribeck velocity
            double v_T=vh;    //tangential velocity
            double b=0;
+           
            if (abs(v_T)<0.00001){
-            //b=0;
             force=0;
-           }else if(abs(v_T)<0.0001){
-            //force=.3*vh/abs(vh);
            }else{
-            //b=0.1;
-            //force=b*vh;
             force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
+           }
+            */
+
+           //Piecewise friction (based on Karnopp philisophy)
+           //The model has been simplified to better suit the hardware capabilities
+            if(abs(v_T)<0.0001){
+            force=.3*vh/abs(vh);//at small speeds, apply a constant force
+           }else{
+            force=0;//once speed increases, remove friction force, helps sell effect
            }     
            #endif
 
-         // A Hard Surface 
+        // A Hard Surface 
         //*************************************************************
            #if defined(ItsSurfaceTime)
             //not sure about this one. force needs to be a function of time?
