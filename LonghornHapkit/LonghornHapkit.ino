@@ -64,13 +64,19 @@ double Tp;              // torque of the motor pulley
 unsigned int output = 0;    // output command to the motor
 
 // Timing Variables: Initalize Timer and Set Haptic Loop
-boolean hapticLoopFlagOut = false; 
-boolean timeoutOccured = false; 
+boolean hapticLoopFlagOut = false;
+boolean timeoutOccured = false;
 
-unsigned long t=0;
-unsigned long t_imp=0;
-boolean inWall =false;
-boolean impact=false;
+unsigned long t = 0; // time since program started
+unsigned long t_imp = 0; //time wall impact occurred
+boolean inWall = false;
+boolean impact = false;
+
+double d = 200;  //[ms]
+double f = 100;   //[rad/s]
+double A = 0.5; //[N/(m/s)]
+double force_vib = 0;
+
 //--------------------------------------------------------------------------
 // Initialize
 //--------------------------------------------------------------------------
