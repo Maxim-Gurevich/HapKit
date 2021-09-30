@@ -13,8 +13,8 @@
 //enable select  functions
 //#define ItsWallTime
 //#define ItsDampingTime
-//#define ItsFrictionTime
-#define ItsBumpTime
+#define ItsFrictionTime
+//#define ItsBumpTime
 //#define ItsTextureTime
 //#define ItsSurfaceTime
 
@@ -222,8 +222,8 @@ void loop()
 
            //Piecewise friction (based on Karnopp philisophy)
            //The model has been simplified to better suit the hardware capabilities
-            if(abs(v_T)<0.0001){
-            force=.3*vh/abs(vh);//at small speeds, apply a constant force
+            if(abs(vh)<0.15&&abs(vh)>0.0001){
+            force=.6*vh/abs(vh);//at small speeds, apply a constant force
            }else{
             force=0;//once speed increases, remove friction force, helps sell effect
            }     
@@ -266,14 +266,24 @@ void loop()
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
+           double fq=500;// frequency adjuster
+           double amp=1; // amplitude adjuster
+           force=amp*sin(fq*xh);//simple sine function
 
+           if ((xh>-0.01885 && xh<0.01257)||(xh<-0.03142 || xh>0.02513)){
+            force=0;
+           }
+/*
            if (xh<-0.02) {
             force=-10/(xh-0.03);//negative spring centered at x=-0.02
            }else if (xh>0.02){
             force=(xh-0.03)*10;//spring centered at x=0.02
            }else{
-            force=0;//separate the two haptic effects
+            force=0;
            }
+           if (abs(xh)>0.04){
+            force=0;//separate the two haptic effects
+           }*/
            #endif
 
           // Texture 
@@ -319,7 +329,7 @@ void loop()
         if(duty < 25){
           duty=0; //deadzone, makes the device less noisy
         }
-            Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(vh); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
