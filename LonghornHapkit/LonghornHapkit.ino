@@ -13,9 +13,9 @@
 //enable select  functions
 //#define ItsWallTime
 //#define ItsDampingTime
-#define ItsFrictionTime
+//#define ItsFrictionTime
 //#define ItsBumpTime
-//#define ItsTextureTime
+#define ItsTextureTime
 //#define ItsSurfaceTime
 
 // Pin Declarations
@@ -277,19 +277,8 @@ void loop()
            force=amp*sin(fq*xh);//simple sine function
 
            if ((xh>-0.01885 && xh<0.01257)||(xh<-0.03142 || xh>0.02513)){
-            force=0;
+            force=0;//only activate force when on correct section of sin wave
            }
-/*
-           if (xh<-0.02) {
-            force=-10/(xh-0.03);//negative spring centered at x=-0.02
-           }else if (xh>0.02){
-            force=(xh-0.03)*10;//spring centered at x=0.02
-           }else{
-            force=0;
-           }
-           if (abs(xh)>0.04){
-            force=0;//separate the two haptic effects
-           }*/
            #endif
 
           // Texture 
