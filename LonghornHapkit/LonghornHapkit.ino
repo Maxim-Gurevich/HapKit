@@ -268,9 +268,9 @@ void loop()
            #if defined(ItsBumpTime)
 
            if (xh<-0.02) {
-            force=(xh-0.03)*-50;//negative spring centered at x=-0.02
+            force=-10/(xh-0.03);//negative spring centered at x=-0.02
            }else if (xh>0.02){
-            force=(xh-0.03)*50;//spring centered at x=0.02
+            force=(xh-0.03)*10;//spring centered at x=0.02
            }else{
             force=0;//separate the two haptic effects
            }
