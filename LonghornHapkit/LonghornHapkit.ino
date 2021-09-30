@@ -14,8 +14,8 @@
 //#define ItsWallTime
 //#define ItsDampingTime
 //#define ItsFrictionTime
-//#define ItsBumpTime
-#define ItsTextureTime
+#define ItsBumpTime
+//#define ItsTextureTime
 //#define ItsSurfaceTime
 
 // Pin Declarations
@@ -187,7 +187,7 @@ void loop()
            #if defined(ItsWallTime)
            double K=300;
              if(xh > 0.005){
-              force = K*(xh-0.005); 
+              force = K*(xh-0.005);//when inside the wall, apply a spring force
              }else{
               force = 0;
              }
@@ -197,7 +197,7 @@ void loop()
         //*************************************************************
            #if defined(ItsDampingTime)
            double b = 1;
-             force = b*vh;
+             force = b*vh;//simple viscous damping
            #endif
 
          // Nonlinear Friction
@@ -205,24 +205,31 @@ void loop()
         //*************************************************************
            #if defined(ItsFrictionTime)
            
+           //Brown and McPhee friction (would like to use this, but arduino is having difficulty)
+           /*
            double F_C=0;    //coulombic friction
-           double F_S=.5;     //static friction
-           double v_S=0.06;  //stribeck velocity
+           double F_S=.06;     //static friction
+           double v_S=0.1;  //stribeck velocity
            double v_T=vh;    //tangential velocity
            double b=0;
+           
            if (abs(v_T)<0.00001){
-            //b=0;
             force=0;
-           }else if(abs(v_T)<0.0001){
-            //force=.3*vh/abs(vh);
            }else{
-            //b=0.1;
-            //force=b*vh;
             force=((F_C*tanh(4*abs(v_T)/v_S)+(F_S-F_C)*(abs(v_T)/v_S)/pow((.25*pow((abs(v_T)/v_S),2)+.75),2)))*v_T/abs(v_T);
+           }
+            */
+
+           //Piecewise friction (based on Karnopp philisophy)
+           //The model has been simplified to better suit the hardware capabilities
+            if(abs(v_T)<0.0001){
+            force=.3*vh/abs(vh);//at small speeds, apply a constant force
+           }else{
+            force=0;//once speed increases, remove friction force, helps sell effect
            }     
            #endif
 
-         // A Hard Surface 
+        // A Hard Surface 
         //*************************************************************
            #if defined(ItsSurfaceTime)
             //not sure about this one. force needs to be a function of time?
@@ -259,18 +266,22 @@ void loop()
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
-           double fq=1000;   // frequency adjuster
-           double amp=.5; // amplitude adjuster
-           force=amp*sin(fq*xh);
+
+           if (xh<-0.02) {
+            force=-10/(xh-0.03);//negative spring centered at x=-0.02
+           }else if (xh>0.02){
+            force=(xh-0.03)*10;//spring centered at x=0.02
+           }else{
+            force=0;//separate the two haptic effects
+           }
            #endif
 
           // Texture 
         //*************************************************************
            #if defined(ItsTextureTime)
-           //I just copied the bump code. Make some changes to get an interesting result
-           double fq=100000;   // frequency adjuster
+           double fq=100000;// frequency adjuster
            double amp=.3; // amplitude adjuster
-           force=amp*sin(fq*xh);
+           force=amp*sin(fq*xh);//simple sine function
            #endif
            
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and 
@@ -285,7 +296,7 @@ void loop()
        
         // Determine correct direction 
         //*************************************************************
-        double Tp = force*rh*rp/rs;
+        double Tp = force*rh*rp/rs;//convert desired force to motor troque
         if(Tp < 0)
         {
         digitalWrite(PWMoutp, HIGH);
@@ -297,7 +308,7 @@ void loop()
         } 
         
         // Convert Torque to Duty
-        int duty=abs(Tp)*255/0.008;
+        int duty=abs(Tp)*255/0.008;//select duty cycle to achive a ballpark torque
         // Limit torque to motor and write
         //*************************************************************
         if(duty > 255)
@@ -306,7 +317,7 @@ void loop()
         }
 
         if(duty < 25){
-          duty=0; //deadzone
+          duty=0; //deadzone, makes the device less noisy
         }
             Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
