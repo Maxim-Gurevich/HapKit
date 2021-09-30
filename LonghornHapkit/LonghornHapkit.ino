@@ -281,7 +281,7 @@ void loop()
            #if defined(ItsTextureTime)
            double fq=100000;// frequency adjuster
            double amp=.3; // amplitude adjuster
-           force=amp*sin(fq*xh);
+           force=amp*sin(fq*xh);//simple sine function
            #endif
            
            // CHALLENGE POINTS: Try simulating a paddle ball! Hint you need to keep track of the virtual balls dynamics and 
@@ -296,7 +296,7 @@ void loop()
        
         // Determine correct direction 
         //*************************************************************
-        double Tp = force*rh*rp/rs;
+        double Tp = force*rh*rp/rs;//convert desired force to motor troque
         if(Tp < 0)
         {
         digitalWrite(PWMoutp, HIGH);
@@ -308,7 +308,7 @@ void loop()
         } 
         
         // Convert Torque to Duty
-        int duty=abs(Tp)*255/0.008;
+        int duty=abs(Tp)*255/0.008;//select duty cycle to achive a ballpark torque
         // Limit torque to motor and write
         //*************************************************************
         if(duty > 255)
@@ -317,7 +317,7 @@ void loop()
         }
 
         if(duty < 25){
-          duty=0; //deadzone
+          duty=0; //deadzone, makes the device less noisy
         }
             Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
