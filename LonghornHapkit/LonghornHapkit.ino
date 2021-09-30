@@ -72,8 +72,8 @@ unsigned long t_imp = 0; //time wall impact occurred
 boolean inWall = false;
 boolean impact = false;
 
-double d = 500;  //[ms]
-double f = 50;   //[rad/s]
+double d = 200;  //[ms]
+double f = 100;   //[rad/s]
 double A = 0.5; //[N/(m/s)]
 double force_vib = 0;
 //--------------------------------------------------------------------------
