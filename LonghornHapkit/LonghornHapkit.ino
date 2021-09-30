@@ -266,14 +266,24 @@ void loop()
          // Bump and Valley  
         //*************************************************************
            #if defined(ItsBumpTime)
+           double fq=500;// frequency adjuster
+           double amp=1; // amplitude adjuster
+           force=amp*sin(fq*xh);//simple sine function
 
+           if ((xh>-0.01885 && xh<0.01257)||(xh<-0.03142 || xh>0.02513)){
+            force=0;
+           }
+/*
            if (xh<-0.02) {
             force=-10/(xh-0.03);//negative spring centered at x=-0.02
            }else if (xh>0.02){
             force=(xh-0.03)*10;//spring centered at x=0.02
            }else{
-            force=0;//separate the two haptic effects
+            force=0;
            }
+           if (abs(xh)>0.04){
+            force=0;//separate the two haptic effects
+           }*/
            #endif
 
           // Texture 
@@ -319,7 +329,7 @@ void loop()
         if(duty < 25){
           duty=0; //deadzone, makes the device less noisy
         }
-            Serial.println(force); // Could print this to troublshoot but don't leave it due to bogging down speed
+            Serial.println(xh); // Could print this to troublshoot but don't leave it due to bogging down speed
         // Write out the motor speed.
         //*************************************************************
         //setPwmFrequency(9, 8);   
