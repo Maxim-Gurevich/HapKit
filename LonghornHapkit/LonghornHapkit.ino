@@ -237,8 +237,7 @@ void loop()
 
         // A Hard Surface
         //*************************************************************
-           #if defined(ItsSurfaceTime)
-            //not sure about this one. force needs to be a function of time?
+          #if defined(ItsSurfaceTime)
            double K=300;
            t = millis();    //[ms]
 
@@ -247,23 +246,17 @@ void loop()
               inWall = false;
            }
            else{
-            force = -K*xh;
-            if(!inWall&&!impact){
-              impact = true;
+            force = K*xh;
+            if(!inWall){
               t_imp = t;
             }
             inWall = true;
-            Serial.println("Hit");
            }
 
-//           if(impact){
-//            //force = force+A*abs(vh)*exp(log(0.001)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
-//            if(t-t_imp>d){
-//              impact = false;
-//            }
-//           }
+            force_vib = A*abs(vh)*exp(log(0.01)*(t-t_imp)/d)*sin(f*(t-t_imp)/1000);
+            force = force+force_vib;
 
-           Serial.println(force);
+
            #endif
 
          // Bump and Valley
